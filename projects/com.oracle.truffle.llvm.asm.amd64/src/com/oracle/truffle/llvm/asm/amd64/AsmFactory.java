@@ -1750,6 +1750,9 @@ class AsmFactory {
     }
 
     private LLVMExpressionNode castResult(LLVMExpressionNode register) {
+        if (retType instanceof PointerType) {
+            return LLVMToAddressNodeGen.create(register, PrimitiveType.I64);
+        }
         switch (((PrimitiveType) retType).getPrimitiveKind()) {
             case I8:
                 return LLVMToI8NoZeroExtNodeGen.create(register);
