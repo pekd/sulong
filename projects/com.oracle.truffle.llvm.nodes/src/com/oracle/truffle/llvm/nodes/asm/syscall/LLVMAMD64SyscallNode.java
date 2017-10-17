@@ -82,10 +82,14 @@ public abstract class LLVMAMD64SyscallNode extends LLVMExpressionNode {
                 return LLVMAMD64SyscallReadvNodeGen.create();
             case LLVMAMD64Syscall.SYS_writev:
                 return LLVMAMD64SyscallWritevNodeGen.create();
+            case LLVMAMD64Syscall.SYS_dup:
+                return new LLVMAMD64SyscallDupNode();
             case LLVMAMD64Syscall.SYS_dup2:
                 return new LLVMAMD64SyscallDup2Node();
             case LLVMAMD64Syscall.SYS_getpid:
                 return new LLVMAMD64SyscallGetpidNode();
+            case LLVMAMD64Syscall.SYS_sendfile:
+                return LLVMAMD64SyscallSendfileNodeGen.create();
             case LLVMAMD64Syscall.SYS_exit:
             case LLVMAMD64Syscall.SYS_exit_group: // TODO: implement difference to SYS_exit
                 return new LLVMAMD64SyscallExitNode();

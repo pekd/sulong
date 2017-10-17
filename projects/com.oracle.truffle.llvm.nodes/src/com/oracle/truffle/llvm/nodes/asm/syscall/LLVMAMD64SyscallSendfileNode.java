@@ -34,21 +34,21 @@ import com.oracle.truffle.llvm.nodes.asm.syscall.posix.LLVMAMD64PosixCallNode;
 import com.oracle.truffle.llvm.nodes.asm.syscall.posix.LLVMAMD64PosixCallNodeGen;
 import com.oracle.truffle.llvm.runtime.LLVMAddress;
 
-public abstract class LLVMAMD64SyscallFstatNode extends LLVMAMD64SyscallOperationNode {
-    @Child private LLVMAMD64PosixCallNode fstat;
+public abstract class LLVMAMD64SyscallSendfileNode extends LLVMAMD64SyscallOperationNode {
+    @Child private LLVMAMD64PosixCallNode sendfile;
 
-    public LLVMAMD64SyscallFstatNode() {
-        super("fstat");
-        fstat = LLVMAMD64PosixCallNodeGen.create("fstat", "(SINT32,POINTER):SINT32", 2);
+    public LLVMAMD64SyscallSendfileNode() {
+        super("ioctl");
+        sendfile = LLVMAMD64PosixCallNodeGen.create("sendfile", "(SINT32,SINT32,POINTER,UINT64):SINT64", 4);
     }
 
     @Specialization
-    protected long executeI64(long fd, LLVMAddress buf) {
-        return (int) fstat.execute((int) fd, buf.getVal());
+    protected long executeI64(long out_fd, long in_fd, LLVMAddress offset, long count) {
+        return (long) sendfile.execute((int) out_fd, (int) in_fd, offset.getVal(), count);
     }
 
     @Specialization
-    protected long executeI64(long fd, long buf) {
-        return (int) fstat.execute((int) fd, buf);
+    protected long executeI64(long out_fd, long in_fd, long offset, long count) {
+        return executeI64(out_fd, in_fd, LLVMAddress.fromLong(offset), count);
     }
 }

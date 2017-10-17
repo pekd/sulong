@@ -30,16 +30,21 @@
 package com.oracle.truffle.llvm.nodes.asm.syscall;
 
 import com.oracle.truffle.api.dsl.Specialization;
+import com.oracle.truffle.llvm.nodes.asm.syscall.posix.LLVMAMD64PosixCallNode;
+import com.oracle.truffle.llvm.nodes.asm.syscall.posix.LLVMAMD64PosixCallNodeGen;
 import com.oracle.truffle.llvm.runtime.LLVMAddress;
 
 public abstract class LLVMAMD64SyscallWritevNode extends LLVMAMD64SyscallOperationNode {
+    @Child private LLVMAMD64PosixCallNode writev;
+
     public LLVMAMD64SyscallWritevNode() {
         super("writev");
+        writev = LLVMAMD64PosixCallNodeGen.create("writev", "(SINT32,POINTER,SINT32):SINT64", 3);
     }
 
     @Specialization
     protected long execute(long fd, LLVMAddress ptr, long size) {
-        return LLVMAMD64File.writev((int) fd, ptr, (int) size);
+        return (long) writev.execute((int) fd, ptr.getVal(), size);
     }
 
     @Specialization

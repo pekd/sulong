@@ -29,15 +29,21 @@
  */
 package com.oracle.truffle.llvm.nodes.asm.syscall;
 
+import com.oracle.truffle.llvm.nodes.asm.syscall.posix.LLVMAMD64PosixCallNode;
+import com.oracle.truffle.llvm.nodes.asm.syscall.posix.LLVMAMD64PosixCallNodeGen;
+
 public class LLVMAMD64SyscallDup2Node extends LLVMAMD64SyscallOperationNode {
+    @Child private LLVMAMD64PosixCallNode dup2;
+
     public LLVMAMD64SyscallDup2Node() {
         super("dup2");
+        dup2 = LLVMAMD64PosixCallNodeGen.create("dup2", "(SINT32,SINT32):SINT32", 2);
     }
 
     @Override
     public long execute(Object rdi, Object rsi, Object rdx, Object r10, Object r8, Object r9) {
         int fd = (int) ((long) rdi);
         int fd2 = (int) ((long) rsi);
-        return LLVMAMD64File.dup2(fd, fd2);
+        return (int) dup2.execute(fd, fd2);
     }
 }

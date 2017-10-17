@@ -43,16 +43,16 @@ public abstract class LLVMAMD64SyscallMmapNode extends LLVMAMD64SyscallOperation
 
     @SuppressWarnings("unused")
     @Specialization
-    protected long execute(LLVMAddress addr, long len, int prot, int flags, int fildes, long off) {
+    protected long execute(LLVMAddress addr, long len, long prot, long flags, long fildes, long off) {
         if (mapAnonymousProfile.profile((flags & LLVMAMD64Memory.MAP_ANONYMOUS) != 0)) {
             LLVMAddress ptr = LLVMMemory.allocateMemory(len);
             return ptr.getVal();
         }
-        return -LLVMAMD64Error.EINVAL;
+        return -LLVMAMD64Error.ENOMEM;
     }
 
     @Specialization
-    protected long execute(long addr, long len, int prot, int flags, int fildes, long off) {
+    protected long execute(long addr, long len, long prot, long flags, long fildes, long off) {
         return execute(LLVMAddress.fromLong(addr), len, prot, flags, fildes, off);
     }
 }

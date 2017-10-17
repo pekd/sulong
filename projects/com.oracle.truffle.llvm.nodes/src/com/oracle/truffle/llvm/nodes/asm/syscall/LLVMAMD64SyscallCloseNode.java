@@ -29,14 +29,20 @@
  */
 package com.oracle.truffle.llvm.nodes.asm.syscall;
 
+import com.oracle.truffle.llvm.nodes.asm.syscall.posix.LLVMAMD64PosixCallNode;
+import com.oracle.truffle.llvm.nodes.asm.syscall.posix.LLVMAMD64PosixCallNodeGen;
+
 public class LLVMAMD64SyscallCloseNode extends LLVMAMD64SyscallOperationNode {
+    @Child private LLVMAMD64PosixCallNode close;
+
     public LLVMAMD64SyscallCloseNode() {
         super("close");
+        close = LLVMAMD64PosixCallNodeGen.create("close", "(SINT32):SINT32", 1);
     }
 
     @Override
     public long execute(Object rdi, Object rsi, Object rdx, Object r10, Object r8, Object r9) {
         int fd = (int) ((long) rdi);
-        return LLVMAMD64File.close(fd);
+        return (int) close.execute(fd);
     }
 }

@@ -29,26 +29,20 @@
  */
 package com.oracle.truffle.llvm.nodes.asm.syscall;
 
-import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.llvm.nodes.asm.syscall.posix.LLVMAMD64PosixCallNode;
 import com.oracle.truffle.llvm.nodes.asm.syscall.posix.LLVMAMD64PosixCallNodeGen;
-import com.oracle.truffle.llvm.runtime.LLVMAddress;
 
-public abstract class LLVMAMD64SyscallFstatNode extends LLVMAMD64SyscallOperationNode {
-    @Child private LLVMAMD64PosixCallNode fstat;
+public class LLVMAMD64SyscallDupNode extends LLVMAMD64SyscallOperationNode {
+    @Child private LLVMAMD64PosixCallNode dup;
 
-    public LLVMAMD64SyscallFstatNode() {
-        super("fstat");
-        fstat = LLVMAMD64PosixCallNodeGen.create("fstat", "(SINT32,POINTER):SINT32", 2);
+    public LLVMAMD64SyscallDupNode() {
+        super("dup");
+        dup = LLVMAMD64PosixCallNodeGen.create("dup", "(SINT32):SINT32", 1);
     }
 
-    @Specialization
-    protected long executeI64(long fd, LLVMAddress buf) {
-        return (int) fstat.execute((int) fd, buf.getVal());
-    }
-
-    @Specialization
-    protected long executeI64(long fd, long buf) {
-        return (int) fstat.execute((int) fd, buf);
+    @Override
+    public long execute(Object rdi, Object rsi, Object rdx, Object r10, Object r8, Object r9) {
+        int fd = (int) ((long) rdi);
+        return (int) dup.execute(fd);
     }
 }

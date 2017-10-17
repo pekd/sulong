@@ -354,7 +354,7 @@ public class LLVMAMD64File {
         return 0;
     }
 
-    public static int dup2(@SuppressWarnings("unused") int oldfd, @SuppressWarnings("unused") int newfd) {
-        return -LLVMAMD64Error.ENOSYS;
+    public static int lstat(LLVMAddress pathname, LLVMAddress statbuf) {
+        return stat(pathname, statbuf);
     }
 }
