@@ -30,18 +30,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
-void *truffle_managed_memcpy(void *destination, const void *source, size_t count) {
-  for (size_t n = 0; n < count; n++) {
-    ((char *)destination)[n] = ((char *)source)[n];
+__attribute__((weak)) void *memset(void *s, int c, size_t n) {
+  uint8_t *ptr = (uint8_t *)s;
+  for (size_t i = 0; i < n; i++) {
+    ptr[i] = c;
   }
-  return destination;
-}
-
-__attribute__((weak)) void *memcpy(void *dst, const void *src, size_t count) {
-  uint8_t *dstptr = (uint8_t *)dst;
-  uint8_t *srcptr = (uint8_t *)src;
-  for (size_t n = 0; n < count; n++) {
-    dstptr[n] = srcptr[n];
-  }
-  return dst;
+  return s;
 }
